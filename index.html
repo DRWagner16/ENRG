@@ -155,33 +155,27 @@
     <script>
         function programWebsite() {
             return {
-                // UI State
                 activeTrack: 'ms',
                 selectedEmphasis: 'All',
                 emphasesList: ['Project Management', 'Nuclear Engineering', 'Efficiency and Renewables', 'Electric Grid and Resilience', 'Policy', 'Systems Engineering'],
                 
-                // Data Loading States
                 loadingCore: true,
                 loadingElectives: true,
                 
-                // Parsed Data Payloads
                 coreCourses: [],
                 allElectives: [],
 
-                // Initialize Component and Fetch Feeds
                 init() {
                     this.fetchCoreCourses();
                     this.fetchElectives();
                 },
 
-                // Fetch Core Courses CSV and parse
                 async fetchCoreCourses() {
                     const url = 'https://docs.google.com/spreadsheets/d/1VzH7juaxaScVPBusqFeo7xNQiBIYnSUKLatuSDG-e4s/gviz/tq?tqx=out:csv&gid=453630858';
                     try {
                         const response = await fetch(url);
                         const data = await response.text();
                         this.coreCourses = this.parseCSV(data).map(row => {
-                            // Extracts just the trailing part of the course digits (e.g., '100' out of 'ENRG 6100')
                             const fullCode = row[0] || '';
                             const baseMatch = fullCode.match(/\d(\d{3})/);
                             const baseNumber = baseMatch ? baseMatch[1] : '100';
@@ -191,7 +185,7 @@
                                 title: row[1] || '',
                                 description: row[2] || 'Core curriculum engineering module.'
                             };
-                        }).filter(c => c.title !== 'Course Title' && c.title !== '');
+                        }).filter(c => c.title && !c.title.toLowerCase().includes('title') && c.title !== '');
                     } catch (err) {
                         console.error("Core courses data load error:", err);
                     } finally {
@@ -199,7 +193,6 @@
                     }
                 },
 
-                // Fetch Technical Electives CSV and parse matrix mappings
                 async fetchElectives() {
                     const url = 'https://docs.google.com/spreadsheets/d/1VzH7juaxaScVPBusqFeo7xNQiBIYnSUKLatuSDG-e4s/gviz/tq?tqx=out:csv&gid=2039595421';
                     try {
@@ -208,7 +201,8 @@
                         const parsedRows = this.parseCSV(data);
                         
                         if (parsedRows.length > 0) {
-                            this.allElectives = parsedRows.slice(1).map((row, index) => {
+                            // Automatically filter out rows that contain metadata/header labels
+                            this.allElectives = parsedRows.filter(row => row[0] && !row[0].toLowerCase().includes('course')).map((row, index) => {
                                 let activeEmphases = [];
                                 if (row[1] == '1') activeEmphases.push('Project Management');
                                 if (row[2] == '1') activeEmphases.push('Nuclear Engineering');
@@ -232,7 +226,6 @@
                     }
                 },
 
-                // Computed property to filter electives dataset reactively
                 get filteredElectives() {
                     if (this.selectedEmphasis === 'All') {
                         return this.allElectives;
@@ -242,9 +235,8 @@
                     );
                 },
 
-                // CSV line parser engine
                 parseCSV(text) {
-                    let p = '', r = [];
+                    let r = [];
                     let q = false;
                     let row = [''];
                     for (let i = 0; i < text.length; i++) {
