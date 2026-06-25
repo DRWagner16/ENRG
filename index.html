@@ -12,9 +12,9 @@
     <header class="bg-red-800 text-white py-12 px-6 shadow-md">
         <div class="max-w-6xl mx-auto">
             <p class="text-red-200 uppercase tracking-widest text-sm font-bold mb-2">University of Utah</p>
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Energy Engineering Graduate Programs</h1>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Energy Engineering Programs</h1>
             <p class="text-lg md:text-xl text-red-100 max-w-3xl leading-relaxed">
-                An interdisciplinary framework integrating advanced systems engineering, economics, policy, modeling, and applied industry experiences to power Utah's expanding energy workforce.
+                An interdisciplinary framework integrating advanced systems engineering, economics, policy, modeling, and applied industry experiences across undergraduate and graduate pathways.
             </p>
         </div>
     </header>
@@ -28,17 +28,17 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-                <button @click="activeTrack = 'ms'" :class="activeTrack === 'ms' ? 'bg-red-800 text-white border-red-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200'" class="p-4 rounded-lg border font-semibold text-left transition flex flex-col justify-between">
+                <button @click="activeTrack = 'ms'" :class="activeTrack === 'ms' ? 'bg-red-800 text-white border-red-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200'" class="p-4 rounded-lg border font-semibold text-left transition flex flex-col justify-between cursor-pointer">
                     <span>Master of Science (MS)</span>
-                    <span class="text-xs opacity-80 mt-2 font-normal">30 Credits • Full Graduate Curriculum</span>
+                    <span class="text-xs opacity-80 mt-2 font-normal">30 Credits • Graduate Degree</span>
                 </button>
-                <button @click="activeTrack = 'cert'" :class="activeTrack === 'cert' ? 'bg-red-800 text-white border-red-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200'" class="p-4 rounded-lg border font-semibold text-left transition flex flex-col justify-between">
+                <button @click="activeTrack = 'cert'" :class="activeTrack === 'cert' ? 'bg-red-800 text-white border-red-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200'" class="p-4 rounded-lg border font-semibold text-left transition flex flex-col justify-between cursor-pointer">
                     <span>Graduate Certificate</span>
-                    <span class="text-xs opacity-80 mt-2 font-normal">15 Credits • Stackable Credential</span>
+                    <span class="text-xs opacity-80 mt-2 font-normal">15 Credits • Stackable Track</span>
                 </button>
-                <button @click="activeTrack = 'prereq'" :class="activeTrack === 'prereq' ? 'bg-red-800 text-white border-red-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200'" class="p-4 rounded-lg border font-semibold text-left transition flex flex-col justify-between">
-                    <span>Prerequisite Entry Track</span>
-                    <span class="text-xs opacity-80 mt-2 font-normal">For Non-Engineering STEM Majors</span>
+                <button @click="activeTrack = 'minor'" :class="activeTrack === 'minor' ? 'bg-red-800 text-white border-red-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200'" class="p-4 rounded-lg border font-semibold text-left transition flex flex-col justify-between cursor-pointer">
+                    <span>Undergraduate Minor</span>
+                    <span class="text-xs opacity-80 mt-2 font-normal">16 Credits • For Engineering Undergrads</span>
                 </button>
             </div>
 
@@ -47,30 +47,28 @@
                     <h3 class="text-xl font-bold text-red-800">Master of Science in Energy Engineering</h3>
                     <p class="text-gray-600 leading-relaxed">Designed for engineering graduates and early-career professionals looking to master power systems management, grid resilience, and emerging alternative energy technologies.</p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200"><strong class="block text-gray-700">12 Core Credits</strong> Complete 4 comprehensive foundational engineering courses.</div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200"><strong class="block text-gray-700">12 Core Credits</strong> Complete 4 comprehensive foundational engineering courses at the 6000-level.</div>
                         <div class="p-4 bg-gray-50 rounded-lg border border-gray-200"><strong class="block text-gray-700">18 Elective Credits</strong> Customize your trajectory with optional specialized program emphases.</div>
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200"><strong class="block text-gray-700">Applied Project Track</strong> Synthesize learning with a 3-member faculty committee and an industrial capstone project.</div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200"><strong class="block text-gray-700">Applied Project Track</strong> Synthesize learning with a 3-member faculty committee and an industrial capstone project (ENRG 6900/6910).</div>
                     </div>
                 </div>
 
                 <div x-show="activeTrack === 'cert'" x-transition class="space-y-4">
                     <h3 class="text-xl font-bold text-red-800">Fundamentals of Energy Engineering Graduate Certificate</h3>
                     <p class="text-gray-600 leading-relaxed">A perfect fit for working professionals who desire immediate energy sector credentials without committing to a full degree. This option serves as a stackable pathway that can later be fully applied toward the MS.</p>
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-100 max-w-xl">
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 max-w-xl">
                         <strong class="text-gray-800 block mb-1">Requirement Check:</strong>
-                        <span class="text-sm text-gray-600">Complete the 4 Core Courses (12 credits) + 3 approved technical elective credits.</span>
+                        <span class="text-sm text-gray-600">Complete the 4 Core Courses at the 6000-level (12 credits) + 3 approved technical elective credits (15 credits total).</span>
                     </div>
                 </div>
 
-                <div x-show="activeTrack === 'prereq'" x-transition class="space-y-4">
-                    <h3 class="text-xl font-bold text-red-800">Prerequisite Pathway for Transitioning STEM Majors</h3>
-                    <p class="text-gray-600 leading-relaxed">Applicants without an engineering degree but possessing robust quantitative backgrounds (e.g., Mathematics, Physics, Economics, Applied Computing) are welcome to enter through completing essential foundational milestones:</p>
-                    <ul class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm font-medium text-gray-700 pt-2">
-                        <li class="bg-yellow-50 border border-yellow-200 px-3 py-2 rounded shadow-2xs text-center">Thermodynamics</li>
-                        <li class="bg-yellow-50 border border-yellow-200 px-3 py-2 rounded shadow-2xs text-center">Fluid Mechanics</li>
-                        <li class="bg-yellow-50 border border-yellow-200 px-3 py-2 rounded shadow-2xs text-center">Electric Circuits</li>
-                        <li class="bg-yellow-50 border border-yellow-200 px-3 py-2 rounded shadow-2xs text-center">Computer Programming</li>
-                    </ul>
+                <div x-show="activeTrack === 'minor'" x-transition class="space-y-4">
+                    <h3 class="text-xl font-bold text-red-800">Undergraduate Minor in Energy Engineering</h3>
+                    <p class="text-gray-600 leading-relaxed">Designed for current undergraduate engineering students who want to expand their studies with technical knowledge and specialized applications tailored directly to the energy sector.</p>
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 max-w-xl">
+                        <strong class="text-gray-800 block mb-1">Requirement Check:</strong>
+                        <span class="text-sm text-gray-600">Complete the 4 Core Courses at the 5000-level (12 credits) + 4 approved technical elective credits (16 credits total).</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -78,19 +76,20 @@
         <section class="space-y-6">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Program Core Curriculum (12 Credits)</h2>
-                <p class="text-gray-500 text-sm">Required core classes establishing systems-level proficiency across generation, infrastructure, and digital controls.</p>
+                <p class="text-gray-500 text-sm">Required core classes establishing systems-level proficiency. Course numbering automatically updates based on your active pathway selection above.</p>
             </div>
 
             <div x-show="loadingCore" class="text-center py-6 text-gray-500">Loading live core courses curriculum from Google Sheets...</div>
             
             <div x-show="!loadingCore" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <template x-for="course in coreCourses" :key="course.number">
+                <template x-for="course in coreCourses" :key="course.baseNumber">
                     <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-2xs hover:shadow-sm transition">
                         <div class="flex justify-between items-start gap-2">
-                            <span class="bg-red-50 text-red-800 text-xs font-bold px-2.5 py-1 rounded-sm tracking-wide" x-text="course.number"></span>
+                            <span class="bg-red-50 text-red-800 text-xs font-bold px-2.5 py-1 rounded-sm tracking-wide" 
+                                  x-text="activeTrack === 'minor' ? 'ENRG 5' + course.baseNumber : 'ENRG 6' + course.baseNumber"></span>
                         </div>
                         <h4 class="text-md font-bold text-gray-800 mt-2" x-text="course.title"></h4>
-                        <p class="text-sm text-gray-600 mt-1 leading-normal" x-text="course.description || 'Core class providing foundational engineering principles across dynamic energy infrastructure and simulation tracks.'"></p>
+                        <p class="text-sm text-gray-600 mt-1 leading-normal" x-text="course.description"></p>
                     </div>
                 </template>
             </div>
@@ -115,33 +114,35 @@
             <div x-show="loadingElectives" class="text-center py-12 text-gray-500">Loading dynamic technical electives master database...</div>
 
             <div x-show="!loadingElectives" class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200 text-left text-sm">
-                    <thead class="bg-gray-50 text-gray-700 font-semibold uppercase text-xs tracking-wider">
-                        <tr>
-                            <th class="px-6 py-4">Course Designation & Title</th>
-                            <th class="px-6 py-4">Aligned Track Emphases Matrix</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 text-gray-700">
-                        <template x-for="course in filteredElectives" :key="course.id">
-                            <tr class="hover:bg-gray-50/70 transition">
-                                <td class="px-6 py-4 max-w-md">
-                                    <div class="font-bold text-gray-900" x-text="course.code + ' – ' + course.title"></div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex flex-wrap gap-1.5">
-                                        <template x-for="emp in course.activeEmphases" :key="emp">
-                                            <span :class="selectedEmphasis === emp ? 'bg-red-800 text-white' : 'bg-gray-100 text-gray-600'" class="text-[10px] font-bold px-2 py-0.5 rounded-sm transition" x-text="emp"></span>
-                                        </template>
-                                        <template x-if="course.activeEmphases.length === 0">
-                                            <span class="text-gray-400 text-xs italic font-normal">General Tech Elective</span>
-                                        </template>
-                                    </div>
-                                </td>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-left text-sm">
+                        <thead class="bg-gray-50 text-gray-700 font-semibold uppercase text-xs tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">Course Designation & Title</th>
+                                <th class="px-6 py-4">Aligned Track Emphases Matrix</th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-gray-700">
+                            <template x-for="course in filteredElectives" :key="course.id">
+                                <tr class="hover:bg-gray-50/70 transition">
+                                    <td class="px-6 py-4 max-w-md">
+                                        <div class="font-bold text-gray-900" x-text="course.code + ' – ' + course.title"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-wrap gap-1.5">
+                                            <template x-for="emp in course.activeEmphases" :key="emp">
+                                                <span :class="selectedEmphasis === emp ? 'bg-red-800 text-white' : 'bg-gray-100 text-gray-600'" class="text-[10px] font-bold px-2 py-0.5 rounded-sm transition" x-text="emp"></span>
+                                            </template>
+                                            <template x-if="course.activeEmphases.length === 0">
+                                                <span class="text-gray-400 text-xs italic font-normal">General Tech Elective</span>
+                                            </template>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -175,16 +176,22 @@
 
                 // Fetch Core Courses CSV and parse
                 async fetchCoreCourses() {
-                    // Pulling directly from your 'Core Courses' tab exported via CSV proxy
                     const url = 'https://docs.google.com/spreadsheets/d/1VzH7juaxaScVPBusqFeo7xNQiBIYnSUKLatuSDG-e4s/gviz/tq?tqx=out:csv&gid=453630858';
                     try {
                         const response = await fetch(url);
                         const data = await response.text();
-                        this.coreCourses = this.parseCSV(data).map(row => ({
-                            number: row[0] || '',
-                            title: row[1] || '',
-                            description: row[2] || ''
-                        })).filter(c => c.number !== 'Course Number' && c.number !== '');
+                        this.coreCourses = this.parseCSV(data).map(row => {
+                            // Extracts just the trailing part of the course digits (e.g., '100' out of 'ENRG 6100')
+                            const fullCode = row[0] || '';
+                            const baseMatch = fullCode.match(/\d(\d{3})/);
+                            const baseNumber = baseMatch ? baseMatch[1] : '100';
+
+                            return {
+                                baseNumber: baseNumber,
+                                title: row[1] || '',
+                                description: row[2] || 'Core curriculum engineering module.'
+                            };
+                        }).filter(c => c.title !== 'Course Title' && c.title !== '');
                     } catch (err) {
                         console.error("Core courses data load error:", err);
                     } finally {
@@ -194,7 +201,6 @@
 
                 // Fetch Technical Electives CSV and parse matrix mappings
                 async fetchElectives() {
-                    // Pulling directly from your 'Electives Matrix' tab exported via CSV proxy
                     const url = 'https://docs.google.com/spreadsheets/d/1VzH7juaxaScVPBusqFeo7xNQiBIYnSUKLatuSDG-e4s/gviz/tq?tqx=out:csv&gid=2039595421';
                     try {
                         const response = await fetch(url);
@@ -202,7 +208,6 @@
                         const parsedRows = this.parseCSV(data);
                         
                         if (parsedRows.length > 0) {
-                            // Map over row elements, parsing tracking columns into simple flag arrays
                             this.allElectives = parsedRows.slice(1).map((row, index) => {
                                 let activeEmphases = [];
                                 if (row[1] == '1') activeEmphases.push('Project Management');
@@ -227,7 +232,7 @@
                     }
                 },
 
-                // Helper Computed Property to sort and filter active dataset reactively
+                // Computed property to filter electives dataset reactively
                 get filteredElectives() {
                     if (this.selectedEmphasis === 'All') {
                         return this.allElectives;
@@ -237,7 +242,7 @@
                     );
                 },
 
-                // Light weight robust CSV line parser handler
+                // CSV line parser engine
                 parseCSV(text) {
                     let p = '', r = [];
                     let q = false;
