@@ -75,21 +75,19 @@
 
         <section class="space-y-6">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800">Program Core Curriculum (12 Credits)</h2>
-                <p class="text-gray-500 text-sm">Required core classes establishing systems-level proficiency. Course numbering automatically updates based on your active pathway selection above.</p>
+                <h2 class="text-2xl font-bold text-gray-800">Program Core Curriculum</h2>
+                <p class="text-gray-500 text-sm">Dynamic list displaying the required core classes based on your chosen program selection track above.</p>
             </div>
 
             <div x-show="loadingCore" class="text-center py-6 text-gray-500">Loading live core courses curriculum from Google Sheets...</div>
             
             <div x-show="!loadingCore" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <template x-for="course in coreCourses" :key="course.baseNumber">
+                <template x-for="course in filteredCoreCourses" :key="course.number">
                     <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-2xs hover:shadow-sm transition">
                         <div class="flex justify-between items-start gap-2">
-                            <span class="bg-red-50 text-red-800 text-xs font-bold px-2.5 py-1 rounded-sm tracking-wide" 
-                                  x-text="activeTrack === 'minor' ? 'ENRG 5' + course.baseNumber : 'ENRG 6' + course.baseNumber"></span>
+                            <span class="bg-red-50 text-red-800 text-xs font-bold px-2.5 py-1 rounded-sm tracking-wide" x-text="course.number"></span>
                         </div>
                         <h4 class="text-md font-bold text-gray-800 mt-2" x-text="course.title"></h4>
-                        <p class="text-sm text-gray-600 mt-1 leading-normal" x-text="course.description"></p>
                     </div>
                 </template>
             </div>
@@ -126,7 +124,7 @@
                             <template x-for="course in filteredElectives" :key="course.id">
                                 <tr class="hover:bg-gray-50/70 transition">
                                     <td class="px-6 py-4 max-w-md">
-                                        <div class="font-bold text-gray-900" x-text="course.code + ' – ' + course.title"></div>
+                                        <div class="font-bold text-gray-900" x-text="course.number + ' – ' + course.title"></div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex flex-wrap gap-1.5">
@@ -157,12 +155,12 @@
             return {
                 activeTrack: 'ms',
                 selectedEmphasis: 'All',
-                emphasesList: ['Project Management', 'Nuclear Engineering', 'Efficiency and Renewables', 'Electric Grid and Resilience', 'Policy', 'Systems Engineering'],
+                emphasesList: ['Project Management', 'Nuclear Engineering', 'Efficiency & Renewables', 'Electric Grid & Resilience', 'Policy', 'Systems Engineering'],
                 
                 loadingCore: true,
                 loadingElectives: true,
                 
-                coreCourses: [],
+                allCoreCourses: [],
                 allElectives: [],
 
                 init() {
@@ -175,17 +173,17 @@
                     try {
                         const response = await fetch(url);
                         const data = await response.text();
-                        this.coreCourses = this.parseCSV(data).map(row => {
-                            const fullCode = row[0] || '';
-                            const baseMatch = fullCode.match(/\d(\d{3})/);
-                            const baseNumber = baseMatch ? baseMatch[1] : '100';
-
+                        const parsedRows = this.parseCSV(data);
+                        
+                        this.allCoreCourses = parsedRows.filter(row => row[0] && !row[0].toLowerCase().includes('course')).map(row => {
                             return {
-                                baseNumber: baseNumber,
+                                number: row[0] || '',
                                 title: row[1] || '',
-                                description: row[2] || 'Core curriculum engineering module.'
+                                isMS: row[2] === '1',
+                                isCert: row[3] === '1',
+                                isMinor: row[4] === '1'
                             };
-                        }).filter(c => c.title && !c.title.toLowerCase().includes('title') && c.title !== '');
+                        });
                     } catch (err) {
                         console.error("Core courses data load error:", err);
                     } finally {
@@ -201,23 +199,22 @@
                         const parsedRows = this.parseCSV(data);
                         
                         if (parsedRows.length > 0) {
-                            // Automatically filter out rows that contain metadata/header labels
                             this.allElectives = parsedRows.filter(row => row[0] && !row[0].toLowerCase().includes('course')).map((row, index) => {
                                 let activeEmphases = [];
-                                if (row[1] == '1') activeEmphases.push('Project Management');
-                                if (row[2] == '1') activeEmphases.push('Nuclear Engineering');
-                                if (row[3] == '1') activeEmphases.push('Efficiency and Renewables');
-                                if (row[4] == '1') activeEmphases.push('Electric Grid and Resilience');
-                                if (row[5] == '1') activeEmphases.push('Policy');
-                                if (row[6] == '1') activeEmphases.push('Systems Engineering');
+                                if (row[2] === '1') activeEmphases.push('Project Management');
+                                if (row[3] === '1') activeEmphases.push('Nuclear Engineering');
+                                if (row[4] === '1') activeEmphases.push('Efficiency & Renewables');
+                                if (row[5] === '1') activeEmphases.push('Electric Grid & Resilience');
+                                if (row[6] === '1') activeEmphases.push('Policy');
+                                if (row[7] === '1') activeEmphases.push('Systems Engineering');
 
                                 return {
                                     id: index,
-                                    code: row[0] || '',
-                                    title: row[7] || 'Specialized Topic Engineering Course',
+                                    number: row[0] || '',
+                                    title: row[1] || 'Specialized Topic Course',
                                     activeEmphases: activeEmphases
                                 };
-                            }).filter(e => e.code !== '');
+                            }).filter(e => e.number !== '');
                         }
                     } catch (err) {
                         console.error("Electives processing matrix error:", err);
@@ -226,6 +223,17 @@
                     }
                 },
 
+                // Filter Core Courses based on the active pathway button selected
+                get filteredCoreCourses() {
+                    return this.allCoreCourses.filter(course => {
+                        if (this.activeTrack === 'ms') return course.isMS;
+                        if (this.activeTrack === 'cert') return course.isCert;
+                        if (this.activeTrack === 'minor') return course.isMinor;
+                        return false;
+                    });
+                },
+
+                // Computed property to handle interactive emphasis badge updates
                 get filteredElectives() {
                     if (this.selectedEmphasis === 'All') {
                         return this.allElectives;
