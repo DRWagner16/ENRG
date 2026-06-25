@@ -96,17 +96,35 @@
         <section class="space-y-6">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Interactive Technical Elective Explorer</h2>
-                <p class="text-gray-500 text-sm">Filter our robust menu of interdisciplinary technical electives by active emphasis track alignment.</p>
+                <p class="text-gray-500 text-sm">Narrow your search by selecting specific course functional emphases and teaching academic departments simultaneously.</p>
             </div>
 
-            <div class="flex flex-wrap gap-2 bg-gray-100 p-3 rounded-lg">
-                <button @click="selectedEmphasis = 'All'" :class="selectedEmphasis === 'All' ? 'bg-red-800 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'" class="px-4 py-2 rounded-md text-xs font-bold shadow-2xs transition cursor-pointer">
-                    Show All Electives
-                </button>
-                <template x-for="emphasis in emphasesList" :key="emphasis">
-                    <button @click="selectedEmphasis = emphasis" :class="selectedEmphasis === emphasis ? 'bg-red-800 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'" class="px-4 py-2 rounded-md text-xs font-bold shadow-2xs transition cursor-pointer" x-text="emphasis">
-                    </button>
-                </template>
+            <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-2xs space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Filter by Curricular Emphasis:</label>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button @click="selectedEmphasis = 'All'" :class="selectedEmphasis === 'All' ? 'bg-red-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-3 py-1.5 rounded text-xs font-bold transition cursor-pointer">
+                            All Emphases
+                        </button>
+                        <template x-for="emphasis in emphasesList" :key="emphasis">
+                            <button @click="selectedEmphasis = emphasis" :class="selectedEmphasis === emphasis ? 'bg-red-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-3 py-1.5 rounded text-xs font-bold transition cursor-pointer" x-text="emphasis">
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-3">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Filter by Offering Department:</label>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button @click="selectedDept = 'All'" :class="selectedDept === 'All' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer">
+                            All Departments
+                        </button>
+                        <template x-for="dept in availableDepts" :key="dept">
+                            <button @click="selectedDept = dept" :class="selectedDept === dept ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer" x-text="dept">
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
 
             <div x-show="loadingElectives" class="text-center py-12 text-gray-500">Loading dynamic technical electives master database...</div>
@@ -138,6 +156,13 @@
                                     </td>
                                 </tr>
                             </template>
+                            <template x-if="filteredElectives.length === 0">
+                                <tr>
+                                    <td colspan="2" class="px-6 py-12 text-center text-gray-400 italic bg-gray-50/50">
+                                        No courses found matching the selected combination of requirements.
+                                    </td>
+                                </tr>
+                            </template>
                         </tbody>
                     </table>
                 </div>
@@ -155,7 +180,9 @@
             return {
                 activeTrack: 'ms',
                 selectedEmphasis: 'All',
+                selectedDept: 'All',
                 emphasesList: ['Project Management', 'Nuclear Engineering', 'Efficiency & Renewables', 'Electric Grid & Resilience', 'Policy', 'Systems Engineering'],
+                availableDepts: [],
                 
                 loadingCore: true,
                 loadingElectives: true,
@@ -199,7 +226,10 @@
                         const parsedRows = this.parseCSV(data);
                         
                         if (parsedRows.length > 0) {
-                            this.allElectives = parsedRows.filter(row => row[0] && !row[0].toLowerCase().includes('course')).map((row, index) => {
+                            const rawCourses = parsedRows.filter(row => row[0] && !row[0].toLowerCase().includes('course'));
+                            
+                            // 1. Map courses & extract the department prefix string programmatically
+                            this.allElectives = rawCourses.map((row, index) => {
                                 let activeEmphases = [];
                                 if (row[2] === '1') activeEmphases.push('Project Management');
                                 if (row[3] === '1') activeEmphases.push('Nuclear Engineering');
@@ -208,13 +238,23 @@
                                 if (row[6] === '1') activeEmphases.push('Policy');
                                 if (row[7] === '1') activeEmphases.push('Systems Engineering');
 
+                                const rawNumber = row[0] || '';
+                                // Extracts alphabetical prefix before numbers (e.g. "CH EN" out of "CH EN 6158")
+                                const deptMatch = rawNumber.match(/^([A-Za-z\s&]+)\s\d/);
+                                const dept = deptMatch ? deptMatch[1].trim() : 'Other';
+
                                 return {
                                     id: index,
-                                    number: row[0] || '',
+                                    number: rawNumber,
                                     title: row[1] || 'Specialized Topic Course',
+                                    dept: dept,
                                     activeEmphases: activeEmphases
                                 };
                             }).filter(e => e.number !== '');
+
+                            // 2. Generate a sorted, unique list of departments for filter buttons
+                            const depts = this.allElectives.map(e => e.dept);
+                            this.availableDepts = [...new Set(depts)].sort();
                         }
                     } catch (err) {
                         console.error("Electives processing matrix error:", err);
@@ -223,7 +263,6 @@
                     }
                 },
 
-                // Filter Core Courses based on the active pathway button selected
                 get filteredCoreCourses() {
                     return this.allCoreCourses.filter(course => {
                         if (this.activeTrack === 'ms') return course.isMS;
@@ -233,14 +272,13 @@
                     });
                 },
 
-                // Computed property to handle interactive emphasis badge updates
+                // Combined Multi-Layer Filtering Logic (Emphasis AND Department Prefix)
                 get filteredElectives() {
-                    if (this.selectedEmphasis === 'All') {
-                        return this.allElectives;
-                    }
-                    return this.allElectives.filter(course => 
-                        course.activeEmphases.includes(this.selectedEmphasis)
-                    );
+                    return this.allElectives.filter(course => {
+                        const matchesEmphasis = this.selectedEmphasis === 'All' || course.activeEmphases.includes(this.selectedEmphasis);
+                        const matchesDept = this.selectedDept === 'All' || course.dept === this.selectedDept;
+                        return matchesEmphasis && matchesDept;
+                    });
                 },
 
                 parseCSV(text) {
